@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+body {
+  background-image: url('./bg3.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  overflow-x: hidden !important;
+  font-family: "Open Sans", sans-serif;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7); /* 0.5 = 50% dimming */
+  z-index: -1;
+}
+.acpBlue {
+  background: #2772eb;
+}
+
+
+* {
+  font-family: "open sans", monospace;
+  
+}
+
+.animatedButton{
+  animation-duration: 10000ms;
+}
+
+.ql-container{
+  border: none !important;
+}
+.ql-toolbar{
+  border: none !important;
+}
+.ql-editor{
+  border: none !important;
+}
+
+.titleAcp{
+  color: #2772eb;
+}
+
+
