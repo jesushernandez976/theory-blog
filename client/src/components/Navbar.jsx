@@ -9,7 +9,7 @@ const Navbar = () => {
   return (
     <div className="w-full mt-5 h-16 md:h-20 flex items-center justify-between">
       {/* LOGO */}
-      <a href="/" className="flex items-center gap-4 text-2xl font-bold">
+      <a href="https://formtheoryrehab.com/" className="flex items-center gap-4 text-2xl font-bold">
         <img
           src="https://formtheoryrehab.com/assets/formlogo.png"
           alt="Form Theory Logo"

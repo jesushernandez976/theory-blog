@@ -5,6 +5,7 @@
 
 
 body {
+  background-color: #000; /* Black fallback always visible */
   background-image: url('https://formtheoryrehab.com/assets/images/bg3.png');
   background-size: cover;
   background-position: center;
@@ -19,10 +20,11 @@ body {
   position: relative;
   margin: 0;
   padding: 0;
-  background: black;
 }
 
+
 html {
+  background-color: #000;
   height: 100%;
 }
 
