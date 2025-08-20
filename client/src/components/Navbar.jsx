@@ -49,7 +49,7 @@ const Navbar = () => {
             open ? "translate-x-0" : "translate-x-full overflow-hidden"
           }`}
         >
-          <Link to="/" className="nav-link" onClick={() => setOpen(false)}>
+          <Link to="https://formtheoryrehab.com/" className="nav-link" onClick={() => setOpen(false)}>
             Home
           </Link>
           <Link to="/posts?sort=popular" onClick={() => setOpen(false)}>
