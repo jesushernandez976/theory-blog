@@ -18,6 +18,7 @@ app.use(cors(process.env.CLIENT_URL));
 app.use(clerkMiddleware());
 app.use("/webhooks", webhookRouter);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -49,107 +50,75 @@ app.use((error, req, res, next) => {
 
 
 
-// Function to verify reCAPTCHA
-function verifyRecaptcha(token) {
-  return new Promise((resolve, reject) => {
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-    const postData = `secret=${secretKey}&response=${token}`;
-
-    const options = {
-      hostname: 'www.google.com',
-      port: 443,
-      path: '/recaptcha/api/siteverify',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(postData)
-      }
-    };
-
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
-      res.on('end', () => {
-        try {
-          const result = JSON.parse(data);
-          resolve(result);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
-
-    req.on('error', (error) => {
-      reject(error);
-    });
-
-    req.write(postData);
-    req.end();
-  });
-}
-
-// POST route to receive form data and send email
-app.post('/send-email', async (req, res) => {
-  const { name, email, phone, message, recaptchaResponse } = req.body;
-
-  // Validate all required fields
-  if (!name || !email || !phone || !message) {
-    return res.status(400).json({ error: 'Please fill all fields' });
-  }
-
-  // Validate reCAPTCHA
-  if (!recaptchaResponse) {
-    return res.status(400).json({ error: 'Please complete the reCAPTCHA verification' });
-  }
-
-  try {
-    // Verify reCAPTCHA with Google
-    const recaptchaResult = await verifyRecaptcha(recaptchaResponse);
-
-    if (!recaptchaResult.success) {
-      console.log('reCAPTCHA verification failed:', recaptchaResult);
-      return res.status(400).json({ error: 'reCAPTCHA verification failed. Please try again.' });
+// Email configuration - Uses environment variables
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // or your email provider
+    auth: {
+        user: process.env.EMAIL_USER, // From .env file
+        pass: process.env.EMAIL_PASS  // From .env file
     }
-
-    // Create transporter object using SMTP (example uses Gmail)
-    let transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    // Email options
-    let mailOptions = {
-      from: email,
-      to: process.env.EMAIL_USER,
-      subject: `New inquiry from ${name}`,
-      text: `
-        Name: ${name}
-        Email: ${email}
-        Phone: ${phone}
-        Message: ${message}
-      `
-    };
-
-    // Send email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error('Email sending error:', error);
-        return res.status(500).json({ error: 'Failed to send email' });
-      }
-      console.log('Email sent: ' + info.response);
-      res.json({ message: 'Email sent successfully!' });
-    });
-
-  } catch (error) {
-    console.error('reCAPTCHA verification error:', error);
-    return res.status(500).json({ error: 'Server error during verification. Please try again.' });
-  }
 });
+
+// Test email configuration
+transporter.verify((error, success) => {
+    if (error) {
+        console.log('Email configuration error:', error);
+    } else {
+        console.log('Email server is ready to send messages');
+    }
+});
+
+// Route to handle form submission
+app.post('/send-email', async (req, res) => {
+    try {
+        const { name, phone, email, message, marketingConsent, dataConsent } = req.body;
+
+        // Validate required fields
+        if (!name || !phone || !email || !message || !dataConsent) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please fill in all required fields and accept the data consent.'
+            });
+        }
+
+        // Email content
+        const mailOptions = {
+            from: process.env.EMAIL_USER, // From .env file
+            to: process.env.EMAIL_TO,     // From .env file
+            subject: `New Contact Form Submission from ${name}`,
+            html: `
+                <h2>New Contact Form Submission</h2>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Message:</strong></p>
+                <p>${message.replace(/\n/g, '<br>')}</p>
+                
+                <hr>
+                <h3>Consent Information:</h3>
+                <p><strong>Marketing Consent:</strong> ${marketingConsent ? 'Yes' : 'No'}</p>
+                <p><strong>Data Processing Consent:</strong> ${dataConsent ? 'Yes' : 'No'}</p>
+                <p><em>Submitted on: ${new Date().toLocaleString()}</em></p>
+            `
+        };
+
+        // Send email
+        await transporter.sendMail(mailOptions);
+
+        res.json({
+            success: true,
+            message: 'Message sent successfully!'
+        });
+
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to send message. Please try again later.'
+        });
+    }
+});
+
 
 
 app.listen(PORT, () => {

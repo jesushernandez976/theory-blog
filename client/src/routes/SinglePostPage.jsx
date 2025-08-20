@@ -81,7 +81,7 @@ const SinglePostPage = () => {
             </p>
             <div className="flex gap-2">
               <a
-                href="https://www.instagram.com/accesscodepro/"
+                href="https://www.instagram.com/formtheoryrehab/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-transform duration-200 hover:scale-110"
@@ -97,15 +97,15 @@ const SinglePostPage = () => {
                 </div>
               </a>
               <a
-                href="https://x.com/accesscodepro"
+                href="https://www.facebook.com/people/Form-Theory/61579281926215/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-transform duration-200 hover:scale-110"
               >
                 <div className="w-8 h-8">
                   <Image
-                    src="x logo.png"
-                    alt="x logo"
+                    src="fb logo.png"
+                    alt="fb logo"
                     width={100}
                     height={100}
                     className="w-full h-full object-contain"
@@ -122,20 +122,20 @@ const SinglePostPage = () => {
             <Link className="underline " to="/posts">
               All
             </Link>
-            <Link className="underline" to="/posts?cat=Web Design">
-              Web Design
+            <Link className="underline" to="/posts?cat=Health">
+              Health
             </Link>
-            <Link className="underline" to="/posts?cat=Development">
-              Development
+            <Link className="underline" to="/posts?cat=Fitness">
+              Fitness
             </Link>
-            <Link className="underline" to="/posts?cat=Tools">
-              Tools
+            <Link className="underline" to="/posts?cat=Rehab">
+              Rehab
             </Link>
-            <Link className="underline" to="/posts?cat=Business">
-              Business
+            <Link className="underline" to="/posts?cat=Performance">
+              Performance
             </Link>
-            <Link className="underline" to="/posts?cat=Marketing">
-              Marketing
+            <Link className="underline" to="/posts?cat=Mindset">
+              Mindset
             </Link>
           </div>
           <h1 className="mt-8 mb-4 text-sm font-medium text-white">Search</h1>
