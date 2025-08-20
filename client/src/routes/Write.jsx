@@ -105,7 +105,7 @@ const Write = () => {
 
   return (
     <div className="h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] flex flex-col gap-6">
-      <h1 className="text-cl font-light text-white">Create a New Post</h1>
+      <h1 className="mt-5 text-cl font-light text-white">*Please upload a cover image first*</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 flex-1 mb-6">
         <Upload type="image" setProgress={setProgress} setData={setCover}>
           <button className="w-max p-2 shadow-md rounded-xl text-sm text-gray-500 bg-white">
@@ -128,11 +128,11 @@ const Write = () => {
             className="p-2 rounded-xl bg-white shadow-md"
           >
             <option value="General">General</option>
-            <option value="Web Design">Web Design</option>
-            <option value="Development">Development</option>
-            <option value="Tools">Tools</option>
-            <option value="Business">Business</option>
-            <option value="Marketing">Marketing</option>
+            <option value="Health">Health</option>
+            <option value="Fitness">Fitness</option>
+            <option value="Rehab">Rehab</option>
+            <option value="Performance">Performance</option>
+            <option value="Mindset">Mindset</option>
           </select>
         </div>
         <textarea

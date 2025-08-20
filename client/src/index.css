@@ -9,10 +9,24 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-attachment: fixed;
   width: 100vw;
+  min-height: 100vh;
   overflow-x: hidden !important;
-  font-family: "Open Sans", sans-serif;
+  font-family: "open sans", sans-serif;
+  font-weight: 200;
+  font-style: normal;
   position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 body::before {
@@ -22,13 +36,16 @@ body::before {
   background: rgba(0, 0, 0, 0.7); /* 0.5 = 50% dimming */
   z-index: -1;
 }
+
 .acpBlue {
   background: #2772eb;
 }
 
 
 * {
-  font-family: "open sans", monospace;
+  font-family: "open sans", sans-serif;
+  font-weight: 200;
+  font-style: normal;
   
 }
 
@@ -48,6 +65,8 @@ body::before {
 
 .titleAcp{
   color: #2772eb;
+  font-weight: 600;
+
 }
 
 

@@ -97,22 +97,6 @@ const SinglePostPage = () => {
                 </div>
               </a>
               <a
-                href="https://www.tiktok.com/@accesscodepro"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-transform duration-200 hover:scale-110"
-              >
-                <div className="w-8 h-8">
-                  <Image
-                    src="tik logo.png"
-                    alt="tik tok logo"
-                    width={100}
-                    height={100}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              </a>
-              <a
                 href="https://x.com/accesscodepro"
                 target="_blank"
                 rel="noopener noreferrer"
