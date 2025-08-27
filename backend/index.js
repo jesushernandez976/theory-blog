@@ -7,7 +7,9 @@ import webhookRouter from "./routes/webhook.route.js";
 import { clerkMiddleware } from "@clerk/express";
 import cors from "cors";
 import nodemailer from "nodemailer";
-import dotenv from 'dotenv';
+// import https from "https";
+import bodyParser from "body-parser";
+
 
 dotenv.config();
 
@@ -35,12 +37,14 @@ app.use("/users", userRouter);
 app.use("/posts", postRouter);
 app.use("/comments", commentRouter);
 
-// Email configuration
-const transporter = nodemailer.createTransporter({
-    service: 'gmail',
+
+
+// Email configuration - Uses environment variables
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // or your email provider
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.EMAIL_USER, // From .env file
+        pass: process.env.EMAIL_PASS  // From .env file
     }
 });
 
@@ -53,11 +57,12 @@ transporter.verify((error, success) => {
     }
 });
 
-// Email route
+// Route to handle form submission
 app.post('/send-email', async (req, res) => {
     try {
         const { name, phone, email, message, marketingConsent, dataConsent } = req.body;
 
+        // Validate required fields
         if (!name || !phone || !email || !message || !dataConsent) {
             return res.status(400).json({
                 success: false,
@@ -65,9 +70,10 @@ app.post('/send-email', async (req, res) => {
             });
         }
 
+        // Email content
         const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_TO,
+            from: process.env.EMAIL_USER, // From .env file
+            to: process.env.EMAIL_TO,     // From .env file
             subject: `New Contact Form Submission from ${name}`,
             html: `
                 <h2>New Contact Form Submission</h2>
@@ -85,6 +91,7 @@ app.post('/send-email', async (req, res) => {
             `
         };
 
+        // Send email
         await transporter.sendMail(mailOptions);
 
         res.json({
@@ -101,30 +108,12 @@ app.post('/send-email', async (req, res) => {
     }
 });
 
-// Health check
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');
 });
 
-// Error handling middleware
-app.use((error, req, res, next) => {
-  console.error('Error:', error);
-  res.status(error.status || 500).json({
-    message: error.message || "Something went wrong!",
-    status: error.status || 500,
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
-  });
-});
-
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-    status: 404
-  });
-});
 
 app.listen(PORT, () => {
   connectDB();
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port the ${PORT}`);
 });
