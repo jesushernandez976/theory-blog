@@ -78,10 +78,10 @@ export const getPosts = async (req, res) => {
 };
 
 export const getPost = async (req, res) => {
- const post = await Post.findOne({ slug: req.params.slug }).populate(
-  "user",
-  "username img role"  // <--- add "role" here
-);
+  const post = await Post.findOne({ slug: req.params.slug }).populate(
+    "user",
+    "username img role"  // <--- add "role" here
+  );
   res.status(200).json(post);
 };
 
@@ -99,7 +99,14 @@ export const createPost = async (req, res) => {
   if (!user) {
     return res.status(404).json("User not found!");
   }
-  
+
+  const userRole = req.auth.sessionClaims?.publicMetadata?.role;
+
+  // If using Clerk's organizations with roles
+  const orgRole = req.auth.orgRole;
+  if (orgRole !== 'admin') {
+    return res.status(403).json("Access denied. Admin privileges required.");
+  }
 
   let slug = req.body.title.replace(/ /g, "-").toLowerCase();
 
@@ -134,7 +141,7 @@ export const deletePost = async (req, res) => {
       // Delete all comments for this post first
       const deletedComments = await Comment.deleteMany({ post: req.params.id });
       console.log(`Deleted ${deletedComments.deletedCount} comments for post ${req.params.id}`);
-      
+
       // Then delete the post
       await Post.findByIdAndDelete(req.params.id);
       return res.status(200).json("Post has been deleted");
