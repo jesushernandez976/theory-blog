@@ -10,38 +10,36 @@ export const clerkWebHook = async (req, res) => {
     throw new Error("Webhook secret needed!");
   }
 
-  const payload = req.body;   // raw buffer (because of bodyParser.raw)
+  const payload = req.body;
   const headers = req.headers;
 
   console.log("Webhook payload received.");
 
+
   const wh = new Webhook(WEBHOOK_SECRET);
   let evt;
   try {
-    evt = wh.verify(payload, headers); // ✅ use raw buffer
-  } catch (err) {
-    console.error("Webhook verification failed:", err.message);
-    return res.status(400).json({
-      message: "Webhook verification failed!",
-    });
-  }
+    evt = wh.verify(payload, headers);
+ } catch (err) {
+  return res.status(400).json({
+    message: "Webhook verification failed!",
+  });
+}
 
   console.log("Incoming Headers:", headers);
   console.log("Incoming Body Buffer:", payload.toString());
 
-  // Handle events
-  if (evt.type === "user.created") {
-    const data = evt.data;
+  // console.log(evt.data);
 
+  if (evt.type === "user.created") {
     const newUser = new User({
-      clerkUserId: data.id,
-      username: data.username || data.email_addresses?.[0]?.email_address,
-      email: data.email_addresses?.[0]?.email_address,
-      img: data.image_url,  // ✅ correct property
+      clerkUserId: evt.data.id,
+      username: evt.data.username || evt.data.email_addresses[0].email_address,
+      email: evt.data.email_addresses[0].email_address,
+      img: evt.data.profile_img_url,
     });
 
     await newUser.save();
-    console.log("✅ User saved to MongoDB:", newUser);
   }
 
   if (evt.type === "user.deleted") {
@@ -49,14 +47,13 @@ export const clerkWebHook = async (req, res) => {
       clerkUserId: evt.data.id,
     });
 
-    if (deletedUser) {
-      await Post.deleteMany({ user: deletedUser._id });
-      await Comment.deleteMany({ user: deletedUser._id });
-      console.log("🗑️ Deleted user and related posts/comments:", deletedUser._id);
-    }
+    await Post.deleteMany({ user: deletedUser._id })
+    await Comment.deleteMany({ user: deletedUser._id })
   }
 
   return res.status(200).json({
     message: "Webhook received",
   });
+
+  
 };
