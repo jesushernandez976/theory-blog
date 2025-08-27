@@ -88,6 +88,8 @@ export const getPost = async (req, res) => {
 export const createPost = async (req, res) => {
   const clerkUserId = req.auth.userId;
 
+  console.log(req.headers);
+
   if (!clerkUserId) {
     return res.status(401).json("Not authenticated!");
   }
@@ -96,11 +98,6 @@ export const createPost = async (req, res) => {
 
   if (!user) {
     return res.status(404).json("User not found!");
-  }
-
-  // 🚨 Only admins can post
-  if (user.role !== "admin") {
-    return res.status(403).json("Only admins can create posts!");
   }
 
   let slug = req.body.title.replace(/ /g, "-").toLowerCase();
