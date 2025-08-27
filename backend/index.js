@@ -10,32 +10,46 @@ import nodemailer from "nodemailer";
 // import https from "https";
 import bodyParser from "body-parser";
 
+const app = express();
 
+
+import dotenv from 'dotenv';
 dotenv.config();
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration - Fixed
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://formtheoryrehab.blog",
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
-
-// Clerk middleware
-app.use(clerkMiddleware());
-
-// Routes
 app.use("/webhooks", webhookRouter);
+
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(clerkMiddleware());
+app.use(cors(process.env.CLIENT_URL));
+
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
+
+
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
 app.use("/comments", commentRouter);
+
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+
+  res.json({
+    message: error.message || "Something went wrong!",
+    status: error.status,
+    stack: error.stack,
+  });
+});
 
 
 
