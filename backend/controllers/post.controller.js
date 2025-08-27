@@ -100,6 +100,10 @@ export const createPost = async (req, res) => {
     return res.status(404).json("User not found!");
   }
 
+    if (!user.isAdmin) {
+    return res.status(403).json("Access denied. Admin privileges required.");
+  }
+
   let slug = req.body.title.replace(/ /g, "-").toLowerCase();
 
   let existingPost = await Post.findOne({ slug });
