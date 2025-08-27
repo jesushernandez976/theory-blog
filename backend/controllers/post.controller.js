@@ -94,17 +94,12 @@ export const createPost = async (req, res) => {
     return res.status(401).json("Not authenticated!");
   }
 
-  // Check if user has admin role from Clerk
-  const userRole = req.auth.sessionClaims?.metadata?.role;
-  if (userRole !== 'admin') {
-    return res.status(403).json("Access denied. Admin privileges required.");
-  }
-
   const user = await User.findOne({ clerkUserId });
 
   if (!user) {
     return res.status(404).json("User not found!");
   }
+  
 
   let slug = req.body.title.replace(/ /g, "-").toLowerCase();
 
