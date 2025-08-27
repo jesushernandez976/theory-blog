@@ -94,26 +94,15 @@ export const createPost = async (req, res) => {
     return res.status(401).json("Not authenticated!");
   }
 
-  // Debug: Log the entire auth object to see where the role is stored
-  console.log("Auth object:", JSON.stringify(req.auth, null, 2));
-  console.log("Session claims:", JSON.stringify(req.auth.sessionClaims, null, 2));
-
-  // Check multiple possible locations for the role
-  const userRole = req.auth.sessionClaims?.metadata?.role || 
-                   req.auth.sessionClaims?.publicMetadata?.role ||
-                   req.auth.sessionClaims?.privateMetadata?.role ||
-                   req.auth.orgRole;
-
-  console.log("User role found:", userRole);
-
-  if (userRole !== 'admin') {
-    return res.status(403).json("Access denied. Admin privileges required.");
-  }
-
   const user = await User.findOne({ clerkUserId });
 
   if (!user) {
     return res.status(404).json("User not found!");
+  }
+
+  // Check if user is admin
+  if (!user.isAdmin) {
+    return res.status(403).json("Access denied. Admin privileges required.");
   }
 
   let slug = req.body.title.replace(/ /g, "-").toLowerCase();
