@@ -11,14 +11,18 @@ import https from "https";
 import bodyParser from "body-parser";
 
 const app = express();
+
+import dotenv from 'dotenv';
+dotenv.config();
+
 const PORT = process.env.PORT || 5000;
-app.use(cors(process.env.CLIENT_URL));
-app.use("/webhooks", webhookRouter);
-app.use(cors(process.env.CLIENT_URL));
-app.use(clerkMiddleware());
+
 app.use("/webhooks", webhookRouter);
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
+app.use(clerkMiddleware());
+app.use(cors(process.env.CLIENT_URL));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -28,9 +32,6 @@ app.use(function (req, res, next) {
   );
   next();
 });
-
-import dotenv from 'dotenv';
-dotenv.config();
 
 
 
