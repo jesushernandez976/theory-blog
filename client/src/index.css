@@ -52,10 +52,6 @@ body::before {
   
 }
 
-.animatedButton{
-  animation-duration: 10000ms;
-}
-
 .ql-container{
   border: none !important;
 }

@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import MainCategories from "../components/MainCategories";
 import FeaturedPosts from "../components/FeaturedPosts";
 import PostList from "../components/PostList";
-import Button2 from "../components/Button2";
+// import Button2 from "../components/Button2";
 
 const Homepage = () => {
   return (
@@ -26,9 +26,7 @@ const Homepage = () => {
           </p>
         </div>
         {/* animated button */}
-        <Link to="write" className="hidden md:block relative pt-20">
-          <Button2 />
-        </Link>
+        
       </div>
       {/* CATEGORIES */}
       <MainCategories />
